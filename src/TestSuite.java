@@ -1,59 +1,54 @@
-public class TestSuite
-{
-    // Run a bunch of basic tests on PigLatinTranslator
-    public static void run()
-    {
-        boolean pass = true;
-        // "null" :) 
-        pass &= basicTest("null", "ullnay");
+public class ValidationSuite {
+    // Execute a series of basic validations on PigLatinProcessor
+    public static void execute() {
+        boolean allTestsPass = true;
 
-        // Test that empty strings don't crash.
-        pass &= basicTest("","");
-        pass &= basicTest("    ", "    ");
+        // Test for null input
+        allTestsPass &= runTest("null", "ullnay");
 
-        // Vowel first letter
-        pass &= basicTest("eat", "eatay");
+        // Test for empty and whitespace-only strings
+        allTestsPass &= runTest("", "");
+        allTestsPass &= runTest("    ", "    ");
+
+        // Words starting with vowels
+        allTestsPass &= runTest("apple", "appleyay");
+
         // Single consonant
-        pass &= basicTest("pig", "igpay");
-        // Double consonant
-        pass &= basicTest("trash", "ashtray");
+        allTestsPass &= runTest("cat", "atcay");
 
-        // Multiple words
-        pass &= basicTest("pigs eat trash", "igspay eatay ashtray");
+        // Words with multiple consonants at the start
+        allTestsPass &= runTest("school", "oolschay");
 
-        // Special words
-        // M.C. - initials
+       // Multiple words
+       allTestsPass &= runTest("cats eat fish", "atscay eatyay ishfay");
 
-        // Capitalization
-        pass &= basicTest("Trash", "Ashtray");
-        pass &= basicTest("TrAsH", "AsHtray");
+       // Mixed-case words
+       allTestsPass &= runTest("Table", "Abletay");
+       allTestsPass &= runTest("TaBlE", "Abletay");
 
-        // Punctuation
-        pass &= basicTest("Trash.", "Ashtray.");
-        pass &= basicTest("clean-cut", "eanclay-utcay");
+       // Words with punctuation
+       allTestsPass &= runTest("Hello!", "Ellohay!");
+       allTestsPass &= runTest("well-done", "ellway-oneday");
 
-        if (pass == true)
-        {
-            System.out.println("--- TEST PASSED! Congrats! ---");
-        }
-        else
-        {
-            System.out.println("--- TEST FAILED! :( ---");
-        }
+       // Special characters and edge cases
+       allTestsPass &= runTest("M.C.", "M.C.");
+       allTestsPass &= runTest("@hello", "@ellohay");
+
+       if (allTestsPass) {
+        System.out.println("--- ALL TESTS PASSED! Great job! ---");
+    } else {
+        System.out.println("--- SOME TESTS FAILED. Please review. ---");
     }
+}
 
-    public static boolean basicTest(String input, String expected)
-    {
-        String result = PigLatinTranslator.translate(input);
-        if (result.equals(expected))
-        {
-            System.out.println(" PASS: '" + input + "' -> '" + expected + "'");
-            return true;
-        }
-        else
-        {
-            System.out.println(" FAIL: '" + input + "', '" + result + "' != '" + expected + "'");
-            return false;
-        }
+public static boolean runTest(String input, String expectedOutput) {
+    String actualOutput = PigLatinProcessor.processLine(input);
+    if (actualOutput.equals(expectedOutput)) {
+        System.out.println(" PASS: Input: '" + input + "' -> Output: '" + expectedOutput + "'");
+        return true;
+    } else {
+        System.out.println(" FAIL: Input: '" + input + "', Output: '" + actualOutput + "' != Expected: '" + expectedOutput + "'");
+        return false;
     }
+}
 }
