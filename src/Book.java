@@ -3,48 +3,116 @@ import java.net.*;
 import java.util.Scanner;
 import java.util.ArrayList; 
 
-public class Book
-{
-    // What should a book contain?
-    // Ideas: need to store text, need to store current reading position
-    //        title, author?, source URL, ... 
-    private String title;
-    private ArrayList<String> text = new ArrayList<String>();
+public class DigitalText {
+    private String bookTitle;
+    private ArrayList<String> content = new ArrayList<>();
 
-    Book()
-    {
-        // Empty book
+    public DigitalText() {
+        // Constructor for an empty digital text
+
     }
 
-    public void printlines(int start, int length)
-    {
-        System.out.println("Lines " + start + " to " + (start + length) + " of book: " + title);
-        for (int i=start; i<start+length; i++)
-        {
-            if (i < text.size())
-            {
-                System.out.println(i + ": " + text.get(i));
-            }
-            else
-            {
-                System.out.println(i + ": line not in book.");     
+    public void displayLines(int startIndex, int numberOfLines) {
+        System.out.println("Showing lines " + startIndex + " to " + (startIndex + numberOfLines) + " from: " + bookTitle);
+        for (int i = startIndex; i < startIndex + numberOfLines; i++) {
+            if (i < content.size()) {
+                System.out.println("Line " + (i + 1) + ": " + content.get(i));
+            } else {
+                System.out.println("Line " + (i + 1) + ": Not available in the text.");
             }
         }
     }
 
-    String getTitle()
-    {
-        return title;
-    }
-    void setTitle(String title)
-    {
-        this.title = title;
+    public String getBookTitle() {
+        return bookTitle;
     }
 
-    String getLine(int lineNumber)
-    {
-        return text.get(lineNumber);
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
     }
+
+    public String fetchLine(int lineNumber) {
+        return content.get(lineNumber);
+    }
+
+    public int getTotalLines() {
+        return content.size();
+    }
+
+    public void addLine(String line) {
+        content.add(line);
+    }
+
+    public void loadFromString(String title, String inputText) {
+        // Load text content from a string input
+        this.bookTitle = title;
+        Scanner scanner = new Scanner(inputText);
+        while (scanner.hasNext()) {
+            content.add(scanner.nextLine());
+        }
+        scanner.close();
+    }
+
+    public void loadFromWeb(String title, String urlString) {
+        // Load text content from a web URL
+        this.bookTitle = title;
+
+        try {
+            URL sourceUrl = new URL(urlString);
+            Scanner scanner = new Scanner(sourceUrl.openStream());
+            while (scanner.hasNext()) {
+                content.add(scanner.nextLine());
+            }
+            scanner.close();
+        } catch (IOException e) {
+            System.err.println("Error loading text from URL: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void saveToFile(String fileName) {
+        // Save text content to a specified file
+        if (content.isEmpty()) {
+            System.out.println("No text available to save.");
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (String line : content) {
+                writer.write(line);
+                writer.newLine();
+            }
+            System.out.println("Content successfully saved to: " + fileName);
+        } catch (IOException e) {
+            System.err.println("Error saving to file: " + e.getMessage());
+        }
+    }
+
+    public void saveToFileWithTitle() {
+        // Save text content using the book title as the file name
+        if (content.isEmpty()) {
+            System.out.println("No text available to save.");
+            return;
+        }
+
+        String fileName = bookTitle.replace(" ", "_") + ".txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            System.out.println("Saving content to file: " + fileName);
+            for (String line : content) {
+                writer.write(line);
+                writer.newLine();
+            }
+            System.out.println("File saved successfully.");
+        } catch (IOException e) {
+            System.err.println("Error saving file: " + e.getMessage());
+        }
+    }
+}
+
+    
+
+   
 
     int getLineCount()
     {
